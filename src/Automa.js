@@ -1,3 +1,16 @@
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function(test) {
+        var result = [];
+        for (var i=0; i<this.length; i++) {
+            var item = this[i];
+            if (test(item)) {
+                result.push(item);
+            }
+        }
+        return result;
+    }
+}
+
 AUTOMA = {
     automa: function(initialState) {
         var currentState = initialState;

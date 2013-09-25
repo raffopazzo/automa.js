@@ -1,6 +1,6 @@
 STATE = {
     S1 : "State 1",
-    S2 : "State 2",
+    S2 : "State 2"
 };
 
 EVENT = {
