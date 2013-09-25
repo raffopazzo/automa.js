@@ -4,7 +4,8 @@ STATE = {
 };
 
 EVENT = {
-    E1 : "Event 1"
+    E1 : "Event 1",
+    E2 : "Event 2"
 };
 
 test("Should run action when stay", function() {
@@ -42,4 +43,16 @@ test("Should remain on same state", function() {
     automa.signal(EVENT.E1);
     automa.signal(EVENT.E1);
     equal(executed, 2, "Action not executed 2 times");
+});
+
+test("Should distinguish between events", function() {
+    var automa = AUTOMA.automa(STATE.S1);
+    var executed1 = false;
+    var executed2 = false;
+    automa.from(STATE.S1).stay().when(EVENT.E1).andDo(function() { executed1 = true; });
+    automa.from(STATE.S1).stay().when(EVENT.E2).andDo(function() { executed2 = true; });
+    automa.signal(EVENT.E1);
+    automa.signal(EVENT.E2);
+    ok(executed1 === true, "Action 1 not executed");
+    ok(executed2 === true, "Action 2 not executed");
 });
