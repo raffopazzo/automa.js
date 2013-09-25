@@ -12,7 +12,7 @@ AUTOMA = {
                     action: null
                 }
                 return {
-                    stay: function() {return this;},
+                    stay: function() {return this.goTo(transition.initialState);},
                     goTo: function(state) {
                         transition.finalState = state;
                         return this;

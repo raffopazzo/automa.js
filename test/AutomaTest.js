@@ -35,3 +35,11 @@ test("Should change state", function() {
     ok(executed2 === true, "Action 2 not executed");
 });
 
+test("Should remain on same state", function() {
+    var automa = AUTOMA.automa(STATE.S1);
+    var executed = 0;
+    automa.from(STATE.S1).stay().when(EVENT.E1).andDo(function() { executed++; });
+    automa.signal(EVENT.E1);
+    automa.signal(EVENT.E1);
+    equal(executed, 2, "Action not executed 2 times");
+});
