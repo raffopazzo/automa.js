@@ -1,13 +1,40 @@
 AUTOMA = {
     automa: function(initialState) {
-        var action = null;
+        var currentState = initialState;
+        var transitions = [];
+
         return {
-            from: function() {return this;},
-            stay: function() {return this;},
-            goTo: function() {return this;},
-            when: function() {return this;},
-            andDo: function(a) {this.action = a; return this;},
-            signal: function() {this.action();}
+            from: function (state) {
+                var transition = {
+                    initialState: state,
+                    finalState: null,
+                    event: null,
+                    action: null
+                }
+                return {
+                    stay: function() {return this;},
+                    goTo: function(state) {
+                        transition.finalState = state;
+                        return this;
+                    },
+                    when: function(e) {
+                        transition.event = e;
+                        return this;
+                    },
+                    andDo: function(a) {
+                        transition.action = a;
+                        transitions.push(transition);
+                    }
+                }
+            },
+            signal: function(event) {
+                var transition = transitions.filter(function(t) {
+                    return t.initialState === currentState &&
+                           t.event === event;
+                }).pop();
+                transition.action();
+                currentState = transition.finalState;
+            }
         }
     }
 }
