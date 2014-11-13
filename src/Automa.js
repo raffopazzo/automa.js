@@ -64,6 +64,18 @@ function Automa(initialState) {
     }
 
     /**
+     * Starts a transition declaration where the final state is the same as the
+     * initial state.
+     *
+     * @param state The state the machine should stay on.
+     *
+     * @return A TransitionDescriptor object to use to programme the transition.
+     */
+    this.stayOn = function __Automa_from(state) {
+        return new TransitionDescriptor(state).goTo(state);
+    }
+
+    /**
      * Send an event to the state machine, to try trigger a transition. If the
      * event being sent to the state machine doesn't trigger a transition from
      * the current state, then the event is ignored and the machine presists in
@@ -110,16 +122,6 @@ function Automa(initialState) {
         this.goTo = function __Automa_TransitionDescriptor_goTo(finalState) {
             transition.finalState = finalState;
             return thiz;
-        }
-
-        /**
-         * Helper method to specify that the current state is, in fact, whatever
-         * the starting state was.
-         *
-         * @return The current TransitionDescriptor to allow method chaining.
-         */
-        this.stay = function __Automa_TransitionDescriptor_stay() {
-            return thiz.goTo(transition.initialState);
         }
 
         /**
