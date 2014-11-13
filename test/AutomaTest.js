@@ -9,7 +9,7 @@ EVENT = {
 };
 
 test("Should run action when stay", function() {
-    var automa = AUTOMA.automa(STATE.S1);
+    var automa = new Automa(STATE.S1);
     var executed = false;
     automa.from(STATE.S1).stay().when(EVENT.E1).andDo(function() { executed = true; });
     automa.signal(EVENT.E1);
@@ -17,7 +17,7 @@ test("Should run action when stay", function() {
 });
 
 test("Should run action when change state", function() {
-    var automa = AUTOMA.automa(STATE.S1);
+    var automa = new Automa(STATE.S1);
     var executed = false;
     automa.from(STATE.S1).goTo(STATE.S2).when(EVENT.E1).andDo(function() { executed = true; });
     automa.signal(EVENT.E1);
@@ -25,7 +25,7 @@ test("Should run action when change state", function() {
 });
 
 test("Should change state", function() {
-    var automa = AUTOMA.automa(STATE.S1);
+    var automa = new Automa(STATE.S1);
     var executed1 = false;
     var executed2 = false;
     automa.from(STATE.S1).goTo(STATE.S2).when(EVENT.E1).andDo(function() { executed1 = true; });
@@ -37,7 +37,7 @@ test("Should change state", function() {
 });
 
 test("Should remain on same state", function() {
-    var automa = AUTOMA.automa(STATE.S1);
+    var automa = new Automa(STATE.S1);
     var executed = 0;
     automa.from(STATE.S1).stay().when(EVENT.E1).andDo(function() { executed++; });
     automa.signal(EVENT.E1);
@@ -46,7 +46,7 @@ test("Should remain on same state", function() {
 });
 
 test("Should distinguish between events", function() {
-    var automa = AUTOMA.automa(STATE.S1);
+    var automa = new Automa(STATE.S1);
     var executed1 = false;
     var executed2 = false;
     automa.from(STATE.S1).stay().when(EVENT.E1).andDo(function() { executed1 = true; });
