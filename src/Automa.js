@@ -54,6 +54,7 @@ function Automa(initialState) {
     var eventsQueue  = [];           /**< Queue of events being processed. */
     var processingEvents = false;    /**< Flag indicating whether events are
                                           already being processed.*/
+    var childAutoma;
 
     /**
      * Starts a transition declaration.
@@ -96,6 +97,10 @@ function Automa(initialState) {
             __Automa_processEvents();
         }
     }
+    
+    this.addChild = function __Automa_addChild(state, child) {
+    	childAutoma = child;
+    };
 
     /* --- end of function --- */
 
@@ -112,14 +117,19 @@ function Automa(initialState) {
         processingEvents = true;
         while(eventsQueue.length > 0) {
             event = eventsQueue.shift();
-            current_transition = transitions.filter(function(t) {
-                return t.initialState === currentState
-                    && t.event === event;
-            }).pop();
-            if (current_transition) {
-                current_transition.action();
-                currentState = current_transition.finalState;
+            if (childAutoma) {
+            	childAutoma.signal(event);
             }
+            else {
+	            current_transition = transitions.filter(function(t) {
+	                return t.initialState === currentState
+	                    && t.event === event;
+	            }).pop();
+	            if (current_transition) {
+	                current_transition.action();
+	                currentState = current_transition.finalState;
+	            }
+	        }
         }
         processingEvents = false;
     }

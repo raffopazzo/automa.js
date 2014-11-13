@@ -3,6 +3,11 @@ STATE = {
     S2 : "State 2"
 };
 
+SUB_STATE = {
+    SS1 : "Sub-State 1",
+    SS2 : "Sub-State 2"
+};
+
 EVENT = {
     E1 : "Event 1",
     E2 : "Event 2"
@@ -81,5 +86,20 @@ test("Should queue up actions in case of nested signalling", function() {
     automa.from(STATE.S1).goTo(STATE.S2).when(EVENT.E1).andDo(function() { automa.signal(EVENT.E2); });
     automa.signal(EVENT.E1);
     ok(executed === true, "Action executed");
+});
+
+test("Should propagate events to the sub-state machine", function() {
+    var parentAutoma = new Automa(STATE.S1);
+    var childAutoma = new Automa(SUB_STATE.SS1);
+    var parentExecuted = false;
+    var childExecuted = false;
+    
+    parentAutoma.addChild(STATE.S1, childAutoma);
+    parentAutoma.from(STATE.S1).goTo(STATE.S2).when(EVENT.E1).andDo(function() { parentExecuted = true; });
+    childAutoma.from(SUB_STATE.SS1).goTo(SUB_STATE.SS2).when(EVENT.E1).andDo(function() { childExecuted = true; });
+    parentAutoma.signal(EVENT.E1);
+    
+    ok(childExecuted === true, "Action executed by the child state machine");
+    ok(parentExecuted === false, "Action not executed by the parent state machine");
 });
 
