@@ -24,7 +24,7 @@ After that you can easily program the various transitions
     var executed1 = false;
     var executed2 = false;
     automa.from(STATE.S1).goTo(STATE.S2).when(EVENT.E1).andDo(function() { executed1 = true; });
-    automa.from(STATE.S2).stay().when(EVENT.E1).andDo(function() { executed2 = true; });
+    automa.stayOn(STATE.S2).when(EVENT.E1).andDo(function() { executed2 = true; });
 
 Your program will the start signalling events to the state machine and it will nicely react as you'd expect it to
 
