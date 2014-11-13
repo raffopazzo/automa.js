@@ -16,6 +16,12 @@ test("Should run action when stay", function() {
     ok(executed === true, "Action not executed");
 });
 
+test("Should ignore irrelevant events", function() {
+    var automa = new Automa(STATE.S1);
+    automa.signal(EVENT.E1);
+    expect(0);
+});
+
 test("Should run action when change state", function() {
     var automa = new Automa(STATE.S1);
     var executed = false;

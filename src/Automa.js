@@ -116,8 +116,10 @@ function Automa(initialState) {
                 return t.initialState === currentState
                     && t.event === event;
             }).pop();
-            current_transition.action();
-            currentState = current_transition.finalState;
+            if (current_transition) {
+                current_transition.action();
+                currentState = current_transition.finalState;
+            }
         }
         processingEvents = false;
     }
