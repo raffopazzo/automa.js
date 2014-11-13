@@ -56,3 +56,14 @@ test("Should distinguish between events", function() {
     ok(executed1 === true, "Action 1 not executed");
     ok(executed2 === true, "Action 2 not executed");
 });
+
+test("Should be able to do nothing", function() {
+    var automa = new Automa(STATE.S1);
+    var executed = false;
+    automa.from(STATE.S1).goTo(STATE.S2).when(EVENT.E1).andDoNothing();
+    automa.from(STATE.S2).stay().when(EVENT.E1).andDo(function() { executed = true; });
+    automa.signal(EVENT.E1);
+    automa.signal(EVENT.E1);
+    ok(executed === true, "Action not executed");
+});
+

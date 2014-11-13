@@ -144,6 +144,14 @@ function Automa(initialState) {
             transition.action = action;
             transitions.push(transition);
         }
+
+        /**
+         * Helper method in case there's no action to execute while
+         * transitioning.
+         */
+        this.andDoNothing = function __Automa_TransitionDescriptor_andDoNothing() {
+            this.andDo(function() { });
+        }
     }
 }
 
