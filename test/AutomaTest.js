@@ -67,3 +67,13 @@ test("Should be able to do nothing", function() {
     ok(executed === true, "Action not executed");
 });
 
+test("Should queue up actions in case of nested signalling", function() {
+    var automa = new Automa(STATE.S1);
+    var executed = false;
+    automa.stayOn(STATE.S1).when(EVENT.E2).andDo(function() { throw "Action not queued up"; });
+    automa.stayOn(STATE.S2).when(EVENT.E2).andDo(function() { executed = true; });
+    automa.from(STATE.S1).goTo(STATE.S2).when(EVENT.E1).andDo(function() { automa.signal(EVENT.E2); });
+    automa.signal(EVENT.E1);
+    ok(executed === true, "Action not executed");
+});
+

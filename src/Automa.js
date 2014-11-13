@@ -51,6 +51,9 @@ if ( ! Array.prototype.filter) {
 function Automa(initialState) {
     var currentState = initialState; /**< The current state of the machine.*/
     var transitions  = [];           /**< List of all possible transitions.*/
+    var eventsQueue  = [];           /**< Queue of events being processed. */
+    var processingEvents = false;    /**< Flag indicating whether events are
+                                          already being processed.*/
 
     /**
      * Starts a transition declaration.
@@ -79,25 +82,50 @@ function Automa(initialState) {
      * Send an event to the state machine, to try trigger a transition. If the
      * event being sent to the state machine doesn't trigger a transition from
      * the current state, then the event is ignored and the machine presists in
-     * the current state.
+     * the current state. If the action executed as part of a transition tries
+     * to trigger another transition, ie by means of another call to
+     * signal(), the event will be queued up to guarantee correct state
+     * transitions and later processed once the original transition has reached
+     * the corresponding final state.
      *
      * @param event The event to send to the state machine.
      */
     this.signal = function __Automa_signal(event) {
-        var transition = transitions.filter(function(t) {
-            return t.initialState === currentState &&
-                   t.event === event;
-        }).pop();
-        transition.action();
-        currentState = transition.finalState;
+        eventsQueue.push(event);
+        if ( ! processingEvents) {
+            __Automa_processEvents();
+        }
     }
 
     /* --- end of function --- */
 
     /**
+     * Process all the events currently in the queue by triggering the
+     * corresponding transition based on the current state. At the end of each
+     * transition the current state will be updated in order to process the next
+     * event in the queue. This guarantees that all events are processed in the
+     * correct order, even if the signal() function is invoked from inside an
+     * action executed as part of another transition.
+     */
+    function __Automa_processEvents() {
+        var current_transition, event;
+        processingEvents = true;
+        while(eventsQueue.length > 0) {
+            event = eventsQueue.shift();
+            current_transition = transitions.filter(function(t) {
+                return t.initialState === currentState
+                    && t.event === event;
+            }).pop();
+            current_transition.action();
+            currentState = current_transition.finalState;
+        }
+        processingEvents = false;
+    }
+
+    /**
      * Construct a new TransitionDescriptor object which can be used to programme a
      * state transition. The user shouldn't be aware of this object as he/she is
-     * supopsed to programe a state transition using method chaining, eg:
+     * supposed to program a state transition using method chaining, eg:
      *
      * automa.from(INITIAL_STATE).goTo(FINAL_STATE).when(EVENT).andDo(ACTION);
      *
