@@ -103,3 +103,19 @@ test("Should propagate events to the sub-state machine", function() {
     ok(parentExecuted === false, "Action not executed by the parent state machine");
 });
 
+test("Should propagate events to the sub-state machine only when in the relevant state", function() {
+    var parentAutoma = new Automa(STATE.S1);
+    var childAutoma = new Automa(SUB_STATE.SS1);
+    var parentExecuted = false;
+    var childExecuted = false;
+    
+    parentAutoma.addChild(STATE.S2, childAutoma);
+    parentAutoma.from(STATE.S1).goTo(STATE.S2).when(EVENT.E1).andDo(function() { parentExecuted = true; });
+    childAutoma.from(SUB_STATE.SS1).goTo(SUB_STATE.SS2).when(EVENT.E1).andDo(function() { childExecuted = true; });
+    parentAutoma.signal(EVENT.E1);
+    
+    ok(childExecuted === false, "Action not executed by the child state machine");
+    ok(parentExecuted === true, "Action executed by the parent state machine");
+});
+
+

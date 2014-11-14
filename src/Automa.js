@@ -54,7 +54,8 @@ function Automa(initialState) {
     var eventsQueue  = [];           /**< Queue of events being processed. */
     var processingEvents = false;    /**< Flag indicating whether events are
                                           already being processed.*/
-    var childAutoma;
+    var childAutomas = [];           /**< List of sub-state machines associated
+    									  with the states.*/
 
     /**
      * Starts a transition declaration.
@@ -98,8 +99,17 @@ function Automa(initialState) {
         }
     }
     
+    /**
+     * Associates a state to a sub-state machine. If an event can be handled by
+     * the sub-state machine, it shall be handled by the sub-state machine. If
+     * the sub-state machine cannot handle the event, then the parent state
+     * machine shall handle it.
+     *
+     * @param state The state in which the sub-state machine operates.
+     * @param child The Automa object to be associated to the state.
+     */
     this.addChild = function __Automa_addChild(state, child) {
-    	childAutoma = child;
+    	childAutomas[state] = child;
     };
 
     /* --- end of function --- */
@@ -117,8 +127,8 @@ function Automa(initialState) {
         processingEvents = true;
         while(eventsQueue.length > 0) {
             event = eventsQueue.shift();
-            if (childAutoma) {
-            	childAutoma.signal(event);
+            if (childAutomas[currentState]) {
+            	childAutomas[currentState].signal(event);
             }
             else {
 	            current_transition = transitions.filter(function(t) {
